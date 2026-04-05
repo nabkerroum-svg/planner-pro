@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Aperçu Planning – Avril 2026 (mois complet)</title>
+<style>
+  body { background: #c8c8c8; font-family: Arial, sans-serif; padding: 24px; margin: 0; }
+  .label { text-align: center; font-size: 13px; color: #444; margin-bottom: 16px; }
+  .sheet {
+    width: 277mm;
+    background: white;
+    margin: 0 auto 28px auto;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.28);
+    padding: 1cm 1.5cm;
+    box-sizing: border-box;
+    page-break-after: always;
+  }
+  :root { --gold:#B08D57; --dark:#1a1208; --gl:#f9f4ec; }
+  * { box-sizing: border-box; margin:0; padding:0; }
+
+  .doc-header { display:flex;align-items:center;gap:16pt;padding-bottom:8pt;margin-bottom:6pt;border-bottom:2pt solid var(--gold); }
+  .doc-header .logo { width:52pt;height:52pt;background:var(--gl);border-radius:4px;display:flex;align-items:center;justify-content:center;border:1px solid #e0c97a;flex-shrink:0;font-size:24px; }
+  .doc-company { font-family:Georgia,serif;font-size:14pt;font-weight:bold;color:var(--dark);letter-spacing:1pt;line-height:1.1; }
+  .doc-company span { color:var(--gold); }
+  .doc-subtitle { font-size:8pt;color:#888;margin-top:2pt;text-transform:uppercase;letter-spacing:.3pt; }
+  .doc-meta { margin-top:3pt;font-size:9pt;color:var(--dark); }
+  .doc-meta b { color:var(--gold); }
+
+  .global-recap { background:var(--gl);border:1pt solid #e0c97a;border-left:3pt solid var(--gold);border-radius:2pt;padding:6pt 10pt;margin:8pt 0;display:flex;gap:0;align-items:stretch; }
+  .recap-stat { flex:1;text-align:center;border-right:1pt solid #e0c97a;padding:0 8pt; }
+  .recap-stat:last-child { border-right:none; }
+  .recap-stat .val { display:block;font-size:12pt;font-weight:bold;color:var(--dark);line-height:1.2; }
+  .recap-stat .lbl { display:block;font-size:7pt;color:#a08050;text-transform:uppercase;letter-spacing:.5pt;margin-top:2pt; }
+
+  .days-grid { display:grid;grid-template-columns:1fr 1fr;gap:10pt; }
+
+  .day-block { page-break-inside:avoid; }
+  .day-header { margin-bottom:4pt;padding-bottom:3pt;border-bottom:1.5pt solid var(--gold); }
+  .day-title { font-family:Georgia,serif;font-size:10.5pt;font-weight:bold;color:var(--dark);letter-spacing:.5pt;text-transform:uppercase; }
+  .day-info { font-size:8pt;color:#666;margin-top:1pt; }
+  .day-info .dstart { color:var(--dark);font-weight:bold; }
+  .day-info .dend { color:var(--gold);font-weight:bold; }
+
+  .interv { display:flex;gap:8pt;align-items:flex-start;padding:3pt 7pt;margin-bottom:3pt;background:#fdfcfa;border-left:2.5pt solid #e0c97a; }
+  .interv-time-col { min-width:50pt;flex-shrink:0;text-align:center; }
+  .interv-tstart { font-size:10pt;font-weight:bold;color:var(--dark);line-height:1; }
+  .interv-arrow { font-size:8pt;color:#bbb;margin:1pt 0; }
+  .interv-tend { font-size:9.5pt;font-weight:bold;color:var(--gold);line-height:1; }
+  .interv-body { flex:1; }
+  .interv-site { font-size:9pt;font-weight:bold;color:var(--dark);line-height:1.2; }
+  .interv-addr { font-size:8pt;color:#777;margin-top:1pt; }
+  .interv-tags { display:flex;gap:8pt;margin-top:2pt;flex-wrap:wrap; }
+  .tag { font-size:7.5pt;padding:1pt 5pt;border-radius:2pt; }
+  .tag-prest { background:#edf5ed;color:#2e6b2e;border:.5pt solid #b0d4b0; }
+  .tag-trajet { background:#fdf3e6;color:#8a5a00;border:.5pt solid #e8c880; }
+
+  .day-recap { display:flex;background:#f7f3ec;border:.5pt solid #e0c97a;border-radius:2pt;padding:3pt 10pt;margin-top:3pt;font-size:8pt; }
+  .day-recap-item { flex:1;color:#5a4000; }
+  .day-recap-item b { color:var(--dark); }
+  .day-recap-total { font-weight:bold;color:var(--dark);text-align:right; }
+
+  .day-sep { border:none;border-top:.5pt solid #e0c97a;margin:8pt 0; }
+
+  .doc-footer { margin-top:14pt;padding-top:5pt;border-top:1.5pt solid var(--gold);display:flex;justify-content:space-between;font-size:8pt;color:#aaa; }
+  .doc-footer b { color:var(--gold); }
+
+  @media print {
+    body { background:white; padding:0; }
+    .label { display:none; }
+    .sheet { box-shadow:none; margin:0; width:100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="label">📄 Aperçu Planning complet — Avril 2026 · Format A4 Paysage · Sophie Martin</div>
+
+<div id="root"></div>
+
+<script>
+// ── Données de démonstration ──────────────────────────────────────────────────
+var EMPLOYEE = "Sophie Martin";
+var PERIOD   = "Avril 2026";
+
+var SITES = [
+  { name:"Résidence Les Pins",       addr:"12 Rue de la Paix, 13001 Marseille" },
+  { name:"Immeuble Colline Bleue",   addr:"45 Avenue du Prado, 13008 Marseille" },
+  { name:"Bureaux Espace Sud",       addr:"3 Rue Paradis, 13006 Marseille" },
+  { name:"Villa Beau Rivage",        addr:"88 Corniche Kennedy, 13007 Marseille" },
+  { name:"Copropriété Le Mistral",   addr:"7 Bd Michelet, 13009 Marseille" },
+  { name:"Clinique Saint-Joseph",    addr:"26 Bd de Louvain, 13013 Marseille" },
+  { name:"Résidence Lumière",        addr:"5 Rue Saint-Ferréol, 13001 Marseille" },
+  { name:"Bureaux Joliette Tower",   addr:"2 Place de la Joliette, 13002 Marseille" },
+  { name:"Pharmacie Centrale",       addr:"14 La Canebière, 13001 Marseille" },
+  { name:"École Jules Ferry",        addr:"9 Rue de Rome, 13001 Marseille" },
+  { name:"Hôtel Mercure Vieux-Port", addr:"4 Rue Beauvau, 13001 Marseille" },
+  { name:"Cabinet Médical Castellane",addr:"31 Rue Dragon, 13006 Marseille" },
+  { name:"Résidence du Parc",        addr:"18 Av. du Parc Borély, 13008 Marseille" },
+  { name:"Centre Commercial Grand Littoral", addr:"Zone Commerciale, 13015 Marseille" },
+  { name:"Mairie du 8e Arrondissement", addr:"60 Av. de la Capelette, 13008 Marseille" },
+  { name:"Lycée Saint-Exupéry",      addr:"Avenue Saint-Exupéry, 13013 Marseille" },
+  { name:"Résidence Bonneveine",     addr:"3 Impasse Bonneveine, 13008 Marseille" },
+  { name:"Cabinet d'Avocats Prado",  addr:"72 Bd du Prado, 13006 Marseille" },
+  { name:"EHPAD Les Lavandes",       addr:"15 Rue du Rove, 13015 Marseille" },
+  { name:"Gymnase Malpassé",         addr:"85 Bd du Capitaine Gèze, 13014 Marseille" },
+];
+
+var SVCS = [
+  { name:"Nettoyage complet",   dur:90  },
+  { name:"Entretien courant",   dur:60  },
+  { name:"Grand nettoyage",     dur:120 },
+  { name:"Nettoyage sanitaire", dur:100 },
+  { name:"Nettoyage vitres",    dur:60  },
+  { name:"Nettoyage classes",   dur:80  },
+  { name:"Nettoyage chambres",  dur:90  },
+];
+
+// Jours ouvrés avril 2026 (sans week-ends, sans lundi de Pâques le 6 avril)
+var WORKDAYS = [
+  { date:"2026-04-01", label:"Mercredi 1er Avril 2026" },
+  { date:"2026-04-02", label:"Jeudi 2 Avril 2026" },
+  { date:"2026-04-03", label:"Vendredi 3 Avril 2026" },
+  { date:"2026-04-07", label:"Mardi 7 Avril 2026" },
+  { date:"2026-04-08", label:"Mercredi 8 Avril 2026" },
+  { date:"2026-04-09", label:"Jeudi 9 Avril 2026" },
+  { date:"2026-04-10", label:"Vendredi 10 Avril 2026" },
+  { date:"2026-04-13", label:"Lundi 13 Avril 2026" },
+  { date:"2026-04-14", label:"Mardi 14 Avril 2026" },
+  { date:"2026-04-15", label:"Mercredi 15 Avril 2026" },
+  { date:"2026-04-16", label:"Jeudi 16 Avril 2026" },
+  { date:"2026-04-17", label:"Vendredi 17 Avril 2026" },
+  { date:"2026-04-21", label:"Mardi 21 Avril 2026" },
+  { date:"2026-04-22", label:"Mercredi 22 Avril 2026" },
+  { date:"2026-04-23", label:"Jeudi 23 Avril 2026" },
+  { date:"2026-04-24", label:"Vendredi 24 Avril 2026" },
+  { date:"2026-04-27", label:"Lundi 27 Avril 2026" },
+  { date:"2026-04-28", label:"Mardi 28 Avril 2026" },
+  { date:"2026-04-29", label:"Mercredi 29 Avril 2026" },
+  { date:"2026-04-30", label:"Jeudi 30 Avril 2026" },
+];
+
+// Génération déterministe des plannings
+function seededRand(seed) {
+  var s = seed;
+  return function() { s = (s * 1664525 + 1013904223) & 0xffffffff; return (s >>> 0) / 0xffffffff; };
+}
+
+function hm(min) {
+  return String(Math.floor(min/60)).padStart(2,"0") + "h" + String(min%60).padStart(2,"0");
+}
+function dur2str(min) {
+  if (min < 60) return min + " min";
+  return Math.floor(min/60) + "h" + (min%60>0?String(min%60).padStart(2,"0"):"00");
+}
+
+// Générer 2-3 interventions par jour (équilibré)
+var rng = seededRand(42);
+var planningData = WORKDAYS.map(function(wd, di) {
+  var nTask = (di % 3 === 0) ? 2 : 3; // alterne 2 et 3 chantiers
+  var interventions = [];
+  var cursor = 360; // 06:00
+  var siteUsed = new Set();
+
+  for (var i = 0; i < nTask; i++) {
+    // Choisir un site non déjà utilisé ce jour
+    var siteIdx;
+    do { siteIdx = Math.floor(rng() * SITES.length); } while (siteUsed.has(siteIdx));
+    siteUsed.add(siteIdx);
+
+    var svcIdx = Math.floor(rng() * SVCS.length);
+    var trav   = i === 0 ? 0 : 8 + Math.floor(rng() * 16); // 8-24 min trajet
+    var site   = SITES[siteIdx];
+    var svc    = SVCS[svcIdx];
+
+    if (i > 0) cursor += trav;
+    var start = cursor;
+    var end   = start + svc.dur;
+    cursor    = end;
+
+    interventions.push({ site, svc, start, end, trav: i===0?0:trav });
+  }
+
+  var dayWork   = interventions.reduce(function(s,t){ return s+t.svc.dur; }, 0);
+  var dayTravel = interventions.reduce(function(s,t){ return s+t.trav; }, 0);
+
+  return { wd, interventions, dayWork, dayTravel };
+});
+
+// Calcul recap global
+var grandNb=0, grandWork=0, grandTravel=0;
+planningData.forEach(function(d){
+  grandNb += d.interventions.length;
+  grandWork += d.dayWork;
+  grandTravel += d.dayTravel;
+});
+
+// ── Rendu HTML ────────────────────────────────────────────────────────────────
+var DAYS_PER_PAGE = 6; // 6 jours par page (grille 2 colonnes × 3 lignes)
+var pages = [];
+for (var p = 0; p < planningData.length; p += DAYS_PER_PAGE) {
+  pages.push(planningData.slice(p, p + DAYS_PER_PAGE));
+}
+
+var gold = "#B08D57";
+var html = "";
+
+pages.forEach(function(pageDays, pageIdx) {
+  html += '<div class="sheet">';
+
+  // Header (seulement page 1)
+  if (pageIdx === 0) {
+    html += '<div class="doc-header">';
+    html += '<div class="logo">🏢</div>';
+    html += '<div>';
+    html += '<div class="doc-company">Marie<span>-</span>Eugénie</div>';
+    html += '<div class="doc-subtitle">Planning d\'interventions — Nettoyage professionnel</div>';
+    html += '<div class="doc-meta">Agent : <b>' + EMPLOYEE + '</b> &nbsp;•&nbsp; Période : <b>' + PERIOD + '</b></div>';
+    html += '</div></div>';
+
+    // Recap global
+    html += '<div class="global-recap">';
+    html += '<div class="recap-stat"><span class="val">' + grandNb + '</span><span class="lbl">Interventions</span></div>';
+    html += '<div class="recap-stat"><span class="val">' + dur2str(grandWork) + '</span><span class="lbl">Sur place</span></div>';
+    html += '<div class="recap-stat"><span class="val">' + dur2str(grandTravel) + '</span><span class="lbl">Trajets</span></div>';
+    html += '<div class="recap-stat"><span class="val">' + dur2str(grandWork+grandTravel) + '</span><span class="lbl">Total</span></div>';
+    html += '<div class="recap-stat"><span class="val">' + WORKDAYS.length + '</span><span class="lbl">Jours</span></div>';
+    html += '</div>';
+  } else {
+    // Header compact pour pages suivantes
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:6pt;margin-bottom:8pt;border-bottom:2pt solid ' + gold + ';">';
+    html += '<div style="font-family:Georgia,serif;font-size:12pt;font-weight:bold;color:#1a1208;">Marie<span style="color:' + gold + '">-</span>Eugénie &nbsp;<span style="font-size:9pt;font-weight:normal;color:#888;">— Planning Avril 2026 — ' + EMPLOYEE + '</span></div>';
+    html += '<div style="font-size:8pt;color:#aaa;">Page ' + (pageIdx+1) + ' / ' + pages.length + '</div>';
+    html += '</div>';
+  }
+
+  // Grille des jours
+  html += '<div class="days-grid">';
+  pageDays.forEach(function(dayData) {
+    var first = dayData.interventions[0];
+    var last  = dayData.interventions[dayData.interventions.length-1];
+    html += '<div class="day-block">';
+    html += '<div class="day-header">';
+    html += '<div class="day-title">' + dayData.wd.label + '</div>';
+    html += '<div class="day-info">Début <span class="dstart">' + hm(first.start) + '</span> &bull; Fin <span class="dend">' + hm(last.end) + '</span> &bull; <b>' + dayData.interventions.length + '</b> intervention' + (dayData.interventions.length>1?'s':'') + '</div>';
+    html += '</div>';
+
+    dayData.interventions.forEach(function(t) {
+      html += '<div class="interv">';
+      html += '<div class="interv-time-col">';
+      html += '<div class="interv-tstart">' + hm(t.start) + '</div>';
+      html += '<div class="interv-arrow">↓</div>';
+      html += '<div class="interv-tend">' + hm(t.end) + '</div>';
+      html += '</div>';
+      html += '<div class="interv-body">';
+      html += '<div class="interv-site">📍 ' + t.site.name + '</div>';
+      html += '<div class="interv-addr">' + t.site.addr + '</div>';
+      html += '<div class="interv-tags">';
+      html += '<span class="tag tag-prest">🧹 ' + t.svc.name + ' — ' + dur2str(t.svc.dur) + '</span>';
+      if (t.trav > 0) html += '<span class="tag tag-trajet">🚗 Trajet : ' + t.trav + ' min</span>';
+      html += '</div></div></div>';
+    });
+
+    html += '<div class="day-recap">';
+    html += '<div class="day-recap-item">🧹 Sur place : <b>' + dur2str(dayData.dayWork) + '</b></div>';
+    html += '<div class="day-recap-item">🚗 Trajets : <b>' + dur2str(dayData.dayTravel) + '</b></div>';
+    html += '<div class="day-recap-total">Total : ' + dur2str(dayData.dayWork+dayData.dayTravel) + '</div>';
+    html += '</div>';
+    html += '</div>'; // .day-block
+  });
+  html += '</div>'; // .days-grid
+
+  // Footer
+  html += '<div class="doc-footer">';
+  html += '<span><b>Marie-Eugénie</b> — Nettoyage Professionnel — Depuis 1975</span>';
+  html += '<span>Généré le vendredi 3 avril 2026 &nbsp;•&nbsp; Page ' + (pageIdx+1) + ' / ' + pages.length + '</span>';
+  html += '</div>';
+
+  html += '</div>'; // .sheet
+});
+
+document.getElementById("root").innerHTML = html;
+</script>
+</body>
+</html>

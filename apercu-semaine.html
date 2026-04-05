@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Aperçu Planning – Semaine du 6 au 12 Avril 2026</title>
+<style>
+  body { background: #c8c8c8; font-family: Arial, sans-serif; padding: 24px; margin: 0; }
+  .label { text-align: center; font-size: 13px; color: #444; margin-bottom: 16px; }
+
+  .sheet {
+    width: 277mm;
+    background: white;
+    margin: 0 auto 28px auto;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.28);
+    padding: 0.8cm 1.2cm;
+    box-sizing: border-box;
+    page-break-after: always;
+  }
+
+  :root { --gold:#B08D57; --dark:#1a1208; --gl:#f9f4ec; }
+  * { box-sizing: border-box; margin:0; padding:0; }
+
+  @page { size: A4 landscape; margin: 1cm 1.5cm; }
+
+  /* ── HEADER ── */
+  .doc-header {
+    display:flex; align-items:center; gap:14pt;
+    padding-bottom:7pt; margin-bottom:5pt;
+    border-bottom:2pt solid var(--gold);
+  }
+  .doc-logo {
+    width:48pt; height:48pt; background:var(--gl);
+    border-radius:4px; display:flex; align-items:center;
+    justify-content:center; border:1px solid #e0c97a;
+    flex-shrink:0; font-size:22px;
+  }
+  .doc-company {
+    font-family:Georgia,serif; font-size:13.5pt; font-weight:bold;
+    color:var(--dark); letter-spacing:1pt; line-height:1.1;
+  }
+  .doc-company span { color:var(--gold); }
+  .doc-subtitle { font-size:7.5pt; color:#888; margin-top:2pt; text-transform:uppercase; letter-spacing:.3pt; }
+  .doc-meta { margin-top:3pt; font-size:8.5pt; color:var(--dark); }
+  .doc-meta b { color:var(--gold); }
+
+  /* ── BADGES DE SEMAINE ── */
+  .week-nav {
+    display:flex; align-items:center; justify-content:flex-end;
+    gap:6pt; margin-left:auto;
+  }
+  .week-badge {
+    background:var(--gold); color:#fff;
+    font-size:7.5pt; font-weight:bold; padding:3pt 8pt;
+    border-radius:2pt; letter-spacing:.3pt; text-transform:uppercase;
+  }
+
+  /* ── RECAP GLOBAL ── */
+  .global-recap {
+    background:var(--gl); border:1pt solid #e0c97a;
+    border-left:3pt solid var(--gold); border-radius:2pt;
+    padding:5pt 10pt; margin:6pt 0;
+    display:flex; gap:0; align-items:stretch;
+  }
+  .recap-stat { flex:1; text-align:center; border-right:1pt solid #e0c97a; padding:0 6pt; }
+  .recap-stat:last-child { border-right:none; }
+  .recap-stat .val { display:block; font-size:11pt; font-weight:bold; color:var(--dark); line-height:1.2; }
+  .recap-stat .lbl { display:block; font-size:6.5pt; color:#a08050; text-transform:uppercase; letter-spacing:.5pt; margin-top:2pt; }
+
+  /* ── GRILLE JOURS ── */
+  .days-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:9pt; margin-top:7pt; }
+  .days-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:9pt; margin-top:7pt; }
+
+  /* ── BLOC JOUR ── */
+  .day-block { page-break-inside:avoid; }
+  .day-header { margin-bottom:4pt; padding-bottom:3pt; border-bottom:1.5pt solid var(--gold); }
+  .day-title {
+    font-family:Georgia,serif; font-size:9.5pt; font-weight:bold;
+    color:var(--dark); letter-spacing:.4pt; text-transform:uppercase;
+  }
+  .day-info { font-size:7.5pt; color:#666; margin-top:1pt; }
+  .day-info .dstart { color:var(--dark); font-weight:bold; }
+  .day-info .dend { color:var(--gold); font-weight:bold; }
+
+  /* ── INTERVENTION ── */
+  .interv {
+    display:flex; gap:7pt; align-items:flex-start;
+    padding:3pt 6pt; margin-bottom:2.5pt;
+    background:#fdfcfa; border-left:2.5pt solid #e0c97a;
+  }
+  .interv-time-col { min-width:44pt; flex-shrink:0; text-align:center; }
+  .interv-tstart { font-size:9.5pt; font-weight:bold; color:var(--dark); line-height:1; }
+  .interv-arrow { font-size:7.5pt; color:#bbb; margin:1pt 0; }
+  .interv-tend { font-size:9pt; font-weight:bold; color:var(--gold); line-height:1; }
+  .interv-body { flex:1; }
+  .interv-site { font-size:8.5pt; font-weight:bold; color:var(--dark); line-height:1.2; }
+  .interv-addr { font-size:7.5pt; color:#777; margin-top:1pt; }
+  .interv-tags { display:flex; gap:6pt; margin-top:2pt; flex-wrap:wrap; }
+  .tag { font-size:7pt; padding:1pt 4pt; border-radius:2pt; }
+  .tag-prest { background:#edf5ed; color:#2e6b2e; border:.5pt solid #b0d4b0; }
+  .tag-trajet { background:#fdf3e6; color:#8a5a00; border:.5pt solid #e8c880; }
+
+  /* ── RECAP JOURNEE ── */
+  .day-recap {
+    display:flex; background:#f7f3ec; border:.5pt solid #e0c97a;
+    border-radius:2pt; padding:2.5pt 8pt; margin-top:2.5pt; font-size:7.5pt;
+  }
+  .day-recap-item { flex:1; color:#5a4000; }
+  .day-recap-item b { color:var(--dark); }
+  .day-recap-total { font-weight:bold; color:var(--dark); text-align:right; }
+
+  /* ── PIED DE PAGE ── */
+  .doc-footer {
+    margin-top:10pt; padding-top:5pt;
+    border-top:1.5pt solid var(--gold);
+    display:flex; justify-content:space-between;
+    font-size:7.5pt; color:#aaa;
+  }
+  .doc-footer b { color:var(--gold); }
+
+  /* ── SEPARATEUR PAGE ── */
+  .page-label { text-align:center; font-size:11px; color:#666; margin:8px 0 12px; }
+
+  /* ── JOUR VIDE ── */
+  .day-empty {
+    padding:8pt 6pt; font-size:8pt; color:#bbb;
+    text-align:center; font-style:italic;
+    border:1pt dashed #e0c97a; border-radius:2pt;
+  }
+</style>
+</head>
+<body>
+
+<div class="label">📄 Aperçu Planning Semaine — A4 Paysage (277 × 210 mm) — Page 1 : Lun / Mar / Mer</div>
+
+<!-- ════════════════════════════════ PAGE 1 ════════════════════════════════ -->
+<div class="sheet">
+
+  <!-- HEADER -->
+  <div class="doc-header">
+    <div class="doc-logo">🏢</div>
+    <div>
+      <div class="doc-company">Marie<span>-</span>Eugénie</div>
+      <div class="doc-subtitle">Planning d'interventions — Nettoyage professionnel</div>
+      <div class="doc-meta">Agent : <b>Sophie Martin</b> &nbsp;•&nbsp; Semaine : <b>6 – 12 Avril 2026</b> &nbsp;•&nbsp; Transport : <b>🚗 Voiture</b></div>
+    </div>
+    <div class="week-nav">
+      <span class="week-badge">Semaine 15</span>
+    </div>
+  </div>
+
+  <!-- RECAP GLOBAL -->
+  <div class="global-recap">
+    <div class="recap-stat"><span class="val">17</span><span class="lbl">Interventions</span></div>
+    <div class="recap-stat"><span class="val">20h45</span><span class="lbl">Sur place</span></div>
+    <div class="recap-stat"><span class="val">3h10</span><span class="lbl">Trajets</span></div>
+    <div class="recap-stat"><span class="val">23h55</span><span class="lbl">Total semaine</span></div>
+    <div class="recap-stat"><span class="val">5</span><span class="lbl">Jours actifs</span></div>
+    <div class="recap-stat"><span class="val">13</span><span class="lbl">Chantiers</span></div>
+  </div>
+
+  <!-- GRILLE JOURS — LUNDI / MARDI / MERCREDI -->
+  <div class="days-grid">
+
+    <!-- LUNDI 6 -->
+    <div class="day-block">
+      <div class="day-header">
+        <div class="day-title">Lundi 6 Avril 2026</div>
+        <div class="day-info">Début <span class="dstart">06:00</span> &bull; Fin <span class="dend">11:45</span> &bull; <b>4</b> interventions</div>
+      </div>
+      <div class="interv">
+        <div class="interv-time-col">
+          <div class="interv-tstart">06:00</div>
+          <div class="interv-arrow">↓</div>
+          <div class="interv-tend">07:30</div>
+        </div>
+        <div class="interv-body">
+          <div class="interv-site">📍 Résidence Les Pins</div>
+          <div class="interv-addr">12 Rue de la Paix, 13001 Marseille</div>
+          <div class="interv-tags">
+            <span class="tag tag-prest">🧹 Nettoyage complet — 1h30</span>
+            <span class="tag tag-trajet">🚗 14 min</span>
+          </div>
+        </div>
+      </div>
+      <div class="interv">
+        <div class="interv-time-col">
+          <div class="interv-tstart">07:44</div>
+          <div class="interv-arrow">↓</div>
+          <div class="interv-tend">09:14</div>
+        </div>
+        <div class="interv-body">
+          <div class="interv-site">📍 Immeuble Colline Bleue</div>
+          <div class="interv-addr">45 Avenue du Prado, 13008 Marseille</div>
+          <div class="interv-tags">
+            <span class="tag tag-prest">🧹 Entretien courant — 1h30</span>
+            <span class="tag tag-trajet">🚗 18 min</span>
+          </div>
+        </div>
+      </div>
+      <div class="interv">
+        <div class="interv-time-col">
+          <div class="interv-tstart">09:32</div>
+          <div class="interv-arrow">↓</div>
+          <div class="interv-tend">11:02</div>
+        </div>
+        <div class="interv-body">
+          <div class="interv-site">📍 Bureaux Espace Sud</div>
+          <div class="interv-addr">3 Rue Paradis, 13006 Marseille</div>
+          <div class="interv-tags">
+            <span class="tag tag-prest">🧹 Grand nettoyage — 1h30</span>
+            <span class="tag tag-trajet">🚗 11 min</span>
+          </div>
+        </div>
+      </div>
+      <div class="interv">
+        <div class="interv-time-col">
+          <div class="interv-tstart">11:13</div>
+          <div class="interv-arrow">↓</div>
+          <div class="interv-tend">11:43</div>
+        </div>
+        <div class="interv-body">
+          <div class="interv-site">📍 Pharmacie Centrale</div>
+          <div class="interv-addr">14 La Canebière, 13001 Marseille</div>
+          <div class="interv-tags">
+            <span class="tag tag-prest">🧹 Entretien rapide — 30 min</span>
+          </div>
+        </div>
+      </div>
+      <div class="day-recap">
+        <div class="day-recap-item">🧹 Sur place : <b>5h00</b></div>
+        <div class="day-recap-item">🚗 Trajets : <b>43 min</b></div>
+        <div class="day-recap-total">Total : 5h43</div>
+      </div>
+    </div>
+
+    <!-- MARDI 7 -->
+    <div class="day-block">
+      <div class="day-header">
+        <div class="day-title">Mardi 7 Avril 2026</div>
+        <div class="day-info">Début <span class="dstart">06:00</span> &bull; Fin <span class="dend">11:20</span> &bull; <b>3</b> interventions</div>
+      </div>
+      <div class="interv">
+        <div class="interv-time-col">
+          <div class="interv-tstart">06:00</div>
+          <div class="interv-arrow">↓</div>
+          <div class="interv-tend">07:30</div>
+        </div>
+        <div class="interv-body">
+          <div class="interv-site">📍 Villa Beau Rivage</div>
+          <div class="interv-addr">88 Corniche Kennedy, 13007 Marseille</div>
+          <div class="interv-tags">
+            <span class="tag tag-prest">🧹 Nettoyage complet — 1h30</span>
+            <span class="tag tag-trajet">🚗 20 min</span>
+          </div>
+        </div>
+      </div>
+      <div class="interv">
+        <div class="interv-time-col">
+          <div class="interv-tstart">07:50</div>
+          <div class="interv-arrow">↓</div>
+          <div class="interv-tend">09:50</div>
+        </div>
+        <div class="interv-body">
+          <div class="interv-site">📍 Copropriété Le Mistral</div>
+          <div class="interv-addr">7 Bd Michelet, 13009 Marseille</div>
+          <div class="interv-tags">
+            <span class="tag tag-prest">🧹 Nettoyage complet — 2h00</span>
+            <span class="tag tag-trajet">🚗 16 min</span>
+          </div>
+        </div>
+      </div>
+      <div class="interv">
+        <div class="interv-time-col">
+          <div class="interv-tstart">10:06</div>
+          <div class="interv-arrow">↓</div>
+          <div class="interv-tend">11:16</div>
+        </div>
+        <div class="interv-body">
+          <div class="interv-site">📍 Clinique Saint-Joseph</div>
+          <div class="interv-addr">26 Bd de Louvain, 13013 Marseille</div>
+          <div class="interv-tags">
+            <span class="tag tag-prest">🧹 Nettoyage sanitaire — 1h10</span>
+          </div>
+        </div>
+      </div>
+      <div class="day-recap">
+        <div class="day-recap-item">🧹 Sur place : <b>4h40</b></div>
+        <div class="day-recap-item">🚗 Trajets : <b>36 min</b></div>
+        <div class="day-recap-total">Total : 5h16</div>
+      </div>
+    </div>
+
+    <!-- MERCREDI 8 -->
+    <div class="day-block">
+      <div class="day-header">
+        <div class="day-title">Mercredi 8 Avril 2026</div>
+        <div class="day-info">Début <span class="dstart">06:00</span> &bull; Fin <span class="dend">10:40</span> &bull; <b>3</b> interventions</div>
+      </div>
+      <div class="interv">
+        <div class="interv-time-col">
+          <div class="interv-tstart">06:00</div>
+          <div class="interv-arrow">↓</div>
+          <div class="interv-tend">07:30</div>
+        </div>
+        <div class="interv-body">
+          <div class="interv-site">📍 Résidence Lumière</div>
+          <div class="interv-addr">5 Rue Saint-Ferréol, 13001 Marseille</div>
+          <div class="interv-tags">
+            <span class="tag tag-prest">🧹 Nettoyage complet — 1h30</span>
+            <span class="tag tag-trajet">🚗 10 min</span>
+          </div>
+        </div>
+      </div>
+      <div class="interv">
+        <div class="interv-time-col">
+          <div class="interv-tstart">07:40</div>
+          <div class="interv-arrow">↓</div>
+          <div class="interv-tend">08:40</div>
+        </div>
+        <div class="interv-body">
+          <div class="interv-site">📍 Bureaux Joliette Tower</div>
+          <div class="interv-addr">2 Place de la Joliette, 13002 Marseille</div>
+          <div class="interv-tags">
+            <span class="tag tag-prest">🧹 Entretien courant — 1h00</span>
+            <span class="tag tag-trajet">🚗 22 min</span>
+          </div>
+        </div>
+      </div>
+      <div class="interv">
+        <div class="interv-time-col">
+          <div class="interv-tstart">09:02</div>
+          <div class="interv-arrow">↓</div>
+          <div class="interv-tend">10:32</div>
+        </div>
+        <div class="interv-body">
+          <div class="interv-site">📍 Hôtel Mercure Vieux-Port</div>
+          <div class="interv-addr">4 Rue Beauvau, 13001 Marseille</div>
+          <div class="interv-tags">
+            <span class="tag tag-prest">🧹 Nettoyage chambres — 1h30</span>
+          </div>
+        </div>
+      </div>
+      <div class="day-recap">
+        <div class="day-recap-item">🧹 Sur place : <b>4h00</b></div>
+        <div class="day-recap-item">🚗 Trajets : <b>32 min</b></div>
+        <div class="day-recap-total">Total : 4h32</div>
+      </div>
+    </div>
+
+  </div><!-- /days-grid page 1 -->
+
+  <!-- PIED DE PAGE -->
+  <div class="doc-footer">
+    <span><b>Marie-Eugénie</b> — Nettoyage Professionnel — Depuis 1975</span>
+    <span>Page 1 / 2 &nbsp;•&nbsp; Généré le dimanche 5 avril 2026</span>
+  </div>
+
+</div><!-- /sheet page 1 -->
+
+
+<!-- ════════════════════════════════ PAGE 2 ════════════════════════════════ -->
+<div class="label">📄 Aperçu Planning Semaine — Page 2 : Jeu / Ven / Sam</div>
+
+<div class="sheet">
+
+  <!-- HEADER -->
+  <div class="doc-header">
+    <div class="doc-logo">🏢</div>
+    <div>
+      <div class="doc-company">Marie<span>-</span>Eugénie</div>
+      <div class="doc-subtitle">Planning d'interventions — Nettoyage professionnel</div>
+      <div class="doc-meta">Agent : <b>Sophie Martin</b> &nbsp;•&nbsp; Semaine : <b>6 – 12 Avril 2026</b> &nbsp;•&nbsp; Transport : <b>🚗 Voiture</b></div>
+    </div>
+    <div class="week-nav">
+      <span class="week-badge">Semaine 15</span>
+    </div>
+  </div>
+
+  <!-- RECAP JOURS RESTANTS -->
+  <div class="global-recap">
+    <div class="recap-stat"><span class="val">7</span><span class="lbl">Interventions</span></div>
+    <div class="recap-stat"><span class="val">8h35</span><span class="lbl">Sur place</span></div>
+    <div class="recap-stat"><span class="val">1h19</span><span class="lbl">Trajets</span></div>
+    <div class="recap-stat"><span class="val">9h54</span><span class="lbl">Total (Jeu–Sam)</span></div>
+    <div class="recap-stat"><span class="val">3</span><span class="lbl">Jours actifs</span></div>
+    <div class="recap-stat"><span class="val">7</span><span class="lbl">Chantiers</span></div>
+  </div>
+
+  <!-- GRILLE JOURS — JEUDI / VENDREDI / SAMEDI -->
+  <div class="days-grid">
+
+    <!-- JEUDI 9 -->
+    <div class="day-block">
+      <div class="day-header">
+        <div class="day-title">Jeudi 9 Avril 2026</div>
+        <div class="day-info">Début <span class="dstart">06:00</span> &bull; Fin <span class="dend">09:52</span> &bull; <b>3</b> interventions</div>
+      </div>
+      <div class="interv">
+        <div class="interv-time-col">
+          <div class="interv-tstart">06:00</div>
+          <div class="interv-arrow">↓</div>
+          <div class="interv-tend">07:00</div>
+        </div>
+        <div class="interv-body">
+          <div class="interv-site">📍 École Jules Ferry</div>
+          <div class="interv-addr">9 Rue de Rome, 13001 Marseille</div>
+          <div class="interv-tags">
+            <span class="tag tag-prest">🧹 Nettoyage classes — 1h00</span>
+            <span class="tag tag-trajet">🚗 8 min</span>
+          </div>
+        </div>
+      </div>
+      <div class="interv">
+        <div class="interv-time-col">
+          <div class="interv-tstart">07:08</div>
+          <div class="interv-arrow">↓</div>
+          <div class="interv-tend">08:38</div>
+        </div>
+        <div class="interv-body">
+          <div class="interv-site">📍 Cabinet Médical Castellane</div>
+          <div class="interv-addr">31 Rue Dragon, 13006 Marseille</div>
+          <div class="interv-tags">
+            <span class="tag tag-prest">🧹 Entretien courant — 1h30</span>
+            <span class="tag tag-trajet">🚗 14 min</span>
+          </div>
+        </div>
+      </div>
+      <div class="interv">
+        <div class="interv-time-col">
+          <div class="interv-tstart">08:52</div>
+          <div class="interv-arrow">↓</div>
+          <div class="interv-tend">09:52</div>
+        </div>
+        <div class="interv-body">
+          <div class="interv-site">📍 Résidence Les Pins</div>
+          <div class="interv-addr">12 Rue de la Paix, 13001 Marseille</div>
+          <div class="interv-tags">
+            <span class="tag tag-prest">🧹 Entretien courant — 1h00</span>
+          </div>
+        </div>
+      </div>
+      <div class="day-recap">
+        <div class="day-recap-item">🧹 Sur place : <b>3h30</b></div>
+        <div class="day-recap-item">🚗 Trajets : <b>22 min</b></div>
+        <div class="day-recap-total">Total : 3h52</div>
+      </div>
+    </div>
+
+    <!-- VENDREDI 10 -->
+    <div class="day-block">
+      <div class="day-header">
+        <div class="day-title">Vendredi 10 Avril 2026</div>
+        <div class="day-info">Début <span class="dstart">06:00</span> &bull; Fin <span class="dend">09:27</span> &bull; <b>2</b> interventions</div>
+      </div>
+      <div class="interv">
+        <div class="interv-time-col">
+          <div class="interv-tstart">06:00</div>
+          <div class="interv-arrow">↓</div>
+          <div class="interv-tend">08:00</div>
+        </div>
+        <div class="interv-body">
+          <div class="interv-site">📍 Copropriété Le Mistral</div>
+          <div class="interv-addr">7 Bd Michelet, 13009 Marseille</div>
+          <div class="interv-tags">
+            <span class="tag tag-prest">🧹 Grand nettoyage — 2h00</span>
+            <span class="tag tag-trajet">🚗 27 min</span>
+          </div>
+        </div>
+      </div>
+      <div class="interv">
+        <div class="interv-time-col">
+          <div class="interv-tstart">08:27</div>
+          <div class="interv-arrow">↓</div>
+          <div class="interv-tend">09:27</div>
+        </div>
+        <div class="interv-body">
+          <div class="interv-site">📍 Immeuble Colline Bleue</div>
+          <div class="interv-addr">45 Avenue du Prado, 13008 Marseille</div>
+          <div class="interv-tags">
+            <span class="tag tag-prest">🧹 Entretien rapide — 1h00</span>
+          </div>
+        </div>
+      </div>
+      <div class="day-recap">
+        <div class="day-recap-item">🧹 Sur place : <b>3h00</b></div>
+        <div class="day-recap-item">🚗 Trajets : <b>27 min</b></div>
+        <div class="day-recap-total">Total : 3h27</div>
+      </div>
+    </div>
+
+    <!-- SAMEDI 11 -->
+    <div class="day-block">
+      <div class="day-header">
+        <div class="day-title">Samedi 11 Avril 2026</div>
+        <div class="day-info">Début <span class="dstart">07:00</span> &bull; Fin <span class="dend">09:35</span> &bull; <b>2</b> interventions</div>
+      </div>
+      <div class="interv">
+        <div class="interv-time-col">
+          <div class="interv-tstart">07:00</div>
+          <div class="interv-arrow">↓</div>
+          <div class="interv-tend">08:30</div>
+        </div>
+        <div class="interv-body">
+          <div class="interv-site">📍 Bureaux Espace Sud</div>
+          <div class="interv-addr">3 Rue Paradis, 13006 Marseille</div>
+          <div class="interv-tags">
+            <span class="tag tag-prest">🧹 Nettoyage complet — 1h30</span>
+            <span class="tag tag-trajet">🚗 5 min</span>
+          </div>
+        </div>
+      </div>
+      <div class="interv">
+        <div class="interv-time-col">
+          <div class="interv-tstart">08:35</div>
+          <div class="interv-arrow">↓</div>
+          <div class="interv-tend">09:35</div>
+        </div>
+        <div class="interv-body">
+          <div class="interv-site">📍 Pharmacie Centrale</div>
+          <div class="interv-addr">14 La Canebière, 13001 Marseille</div>
+          <div class="interv-tags">
+            <span class="tag tag-prest">🧹 Vitres + sanitaires — 1h00</span>
+          </div>
+        </div>
+      </div>
+      <div class="day-recap">
+        <div class="day-recap-item">🧹 Sur place : <b>2h30</b></div>
+        <div class="day-recap-item">🚗 Trajets : <b>5 min</b></div>
+        <div class="day-recap-total">Total : 2h35</div>
+      </div>
+    </div>
+
+  </div><!-- /days-grid page 2 -->
+
+  <!-- RECAP SEMAINE COMPLET -->
+  <div style="margin-top:10pt; background:#1a1208; border-radius:3pt; padding:6pt 12pt; display:flex; gap:0; align-items:center;">
+    <div style="color:#e0c97a; font-family:Georgia,serif; font-size:9pt; font-weight:bold; letter-spacing:.5pt; flex:1;">
+      ✔ RÉCAPITULATIF SEMAINE 15
+    </div>
+    <div style="display:flex; gap:0; flex:2;">
+      <div style="flex:1; text-align:center; border-right:1pt solid #3a2a0e; padding:0 8pt;">
+        <span style="display:block; font-size:10pt; font-weight:bold; color:#fff;">17</span>
+        <span style="display:block; font-size:6.5pt; color:#b09060; text-transform:uppercase;">Interventions</span>
+      </div>
+      <div style="flex:1; text-align:center; border-right:1pt solid #3a2a0e; padding:0 8pt;">
+        <span style="display:block; font-size:10pt; font-weight:bold; color:#fff;">13</span>
+        <span style="display:block; font-size:6.5pt; color:#b09060; text-transform:uppercase;">Chantiers</span>
+      </div>
+      <div style="flex:1; text-align:center; border-right:1pt solid #3a2a0e; padding:0 8pt;">
+        <span style="display:block; font-size:10pt; font-weight:bold; color:#B08D57;">20h45</span>
+        <span style="display:block; font-size:6.5pt; color:#b09060; text-transform:uppercase;">Sur place</span>
+      </div>
+      <div style="flex:1; text-align:center; border-right:1pt solid #3a2a0e; padding:0 8pt;">
+        <span style="display:block; font-size:10pt; font-weight:bold; color:#B08D57;">3h10</span>
+        <span style="display:block; font-size:6.5pt; color:#b09060; text-transform:uppercase;">Trajets</span>
+      </div>
+      <div style="flex:1; text-align:center; padding:0 8pt;">
+        <span style="display:block; font-size:10pt; font-weight:bold; color:#e0c97a;">23h55</span>
+        <span style="display:block; font-size:6.5pt; color:#b09060; text-transform:uppercase;">Total</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PIED DE PAGE -->
+  <div class="doc-footer">
+    <span><b>Marie-Eugénie</b> — Nettoyage Professionnel — Depuis 1975</span>
+    <span>Page 2 / 2 &nbsp;•&nbsp; Généré le dimanche 5 avril 2026</span>
+  </div>
+
+</div><!-- /sheet page 2 -->
+
+</body>
+</html>
